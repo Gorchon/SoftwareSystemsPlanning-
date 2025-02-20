@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "assert": "^2.1.0",
+    "mocha": "^11.1.0",
+    "selenium-webdriver": "^4.28.1"
+  },
+  "name": "tests",
+  "version": "1.0.0",
+  "description": "tests ",
+  "main": "",
+  "devDependencies": {
+    "chromedriver": "^133.0.1"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "license": "ISC"
+}
