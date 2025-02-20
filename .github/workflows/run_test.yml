@@ -2,7 +2,7 @@ name: Run tests
 
 on:
   workflow_dispatch:
-  
+
 jobs:
   test:
     name: Test
@@ -17,17 +17,25 @@ jobs:
         options: --shm-size=2gb
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
-      - run: cd tests
-      - run: npm install
-      - run: ./node_modules/.bin/mocha *.js
-       
-      - uses: actions/upload-artifact@v4
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npx mocha tests/*.spec.js
+
+      - name: Upload test artifacts (if screenshots exist)
         if: always()
+        uses: actions/upload-artifact@v4
         with:
           name: screenshots
           path: screenshots/
+          if-no-files-found: ignore # Prevents errors if the folder doesn't exist
