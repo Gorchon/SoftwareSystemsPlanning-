@@ -33,10 +33,8 @@ describe('-1+-1', function () {
             await driver.quit();
         }
     });
-
-
   it('Valid Operation with Negative Number', async function() {
-    await driver.get("http://127.0.0.1:8000/index.html")
+    await driver.get("http://localhost:8000//")
     await driver.manage().window().setRect({ width: 769, height: 1079 })
     await driver.findElement(By.id("num1")).click()
     await driver.findElement(By.id("num1")).sendKeys("-5")
