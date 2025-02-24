@@ -35,7 +35,7 @@ describe('-1+-1', function () {
     });
 
   it('Both Operands Empty ', async function() {
-    await driver.get("http://localhost:8000//")
+    await driver.get("http://127.0.0.1:8000/index.html")
     await driver.manage().window().setRect({ width: 918, height: 1079 })
     await driver.findElement(By.css("button:nth-child(1)")).click()
   })
