@@ -34,7 +34,7 @@ describe('-1+-1', function () {
         }
     });
   it('normalAddition', async function() {
-    await driver.get("http://127.0.0.1:5500/src/index.html")
+    await driver.get("http://127.0.0.1:8000/index.html")
     await driver.manage().window().setRect({ width: 550, height: 692 })
     {
       const element = await driver.findElement(By.css("button:nth-child(3)"))
