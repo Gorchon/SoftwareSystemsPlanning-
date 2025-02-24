@@ -6,36 +6,50 @@ on:
 jobs:
   test:
     name: Test
-    runs-on: ubuntu-latest
+
+    runs-on: ubuntu-22.04
 
     container:
       image: node:20
 
-    services:
-      selenium:
-        image: selenium/standalone-chrome
-        options: --shm-size=2gb
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
+
         with:
           node-version: "20"
-          cache: "npm"
 
-      - name: Install dependencies
-        run: npm install
+      - uses: browser-actions/setup-chrome@v1
 
-      - name: Run tests
-        run: npx mocha tests/*.spec.js
+        with:
+          chrome-version: 120
 
-      - name: Upload test artifacts (if screenshots exist)
+          install-dependencies: true
+
+      - run: |
+
+          cd src
+
+          python3 -m http.server 8000 &
+
+          sleep 10 &&
+
+          curl http://localhost:8000
+
+          cd ..
+
+          cd tests
+
+          npm install
+
+          ./node_modules/.bin/mocha *.js
+
+      - uses: actions/upload-artifact@v4
+
         if: always()
-        uses: actions/upload-artifact@v4
+
         with:
           name: screenshots
+
           path: screenshots/
-          if-no-files-found: ignore # Prevents errors if the folder doesn't exist
