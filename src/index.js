@@ -1,22 +1,26 @@
 function calculate(operation) {
-    const num1 = document.getElementById('num1').value;
-    const num2 = document.getElementById('num2').value;
+    const num1Element = document.getElementById('num1');
+    const num2Element = document.getElementById('num2');
+    const num1 = num1Element.value.trim();
+    const num2 = num2Element.value.trim();
+    const resultElement = document.getElementById('result');
+    const operatorElement = document.getElementById('operator');
 
     if (num1 === '' || num2 === '') {
-        alert("Please enter both numbers.");
+        resultElement.innerHTML = 'Result: Error - Both numbers are required';
         return;
     }
 
     let result;
     if (operation === "+") {
         result = parseFloat(num1) + parseFloat(num2);
-        document.getElementById('operator').innerHTML = '+';
+        operatorElement.innerHTML = '+';
     } else if (operation === "-") {
         result = parseFloat(num1) - parseFloat(num2);
-        document.getElementById('operator').innerHTML = '-';
+        operatorElement.innerHTML = '-';
     }
 
-    document.getElementById('result').innerHTML = `Result: ${result}`;
+    resultElement.innerHTML = `Result: ${result}`;
 }
 
 function resetFields() {
