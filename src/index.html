@@ -1,49 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Calculator</title>
-    <link rel="stylesheet" href="index.css" />
+    <!-- Define el tipo de documento como HTML5 -->
+    <meta charset="UTF-8" /> <!-- Especifica la codificación de caracteres -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <!-- Permite una correcta visualización en dispositivos móviles -->
+    <title>Calculator</title> <!-- Título de la página que aparece en la pestaña del navegador -->
+    <link rel="stylesheet" href="index.css" /> <!-- Enlace a la hoja de estilos externa -->
   </head>
   <body>
-    <div class="wrapper">
-      <h1>Simple Calculator</h1>
+    <div class="wrapper"> <!-- Contenedor principal de la calculadora -->
+      <h1>Simple Calculator</h1> <!-- Título principal -->
 
-      <div class="input-group">
-        <label for="num1">Enter first number:</label>
-        <input type="number" id="num1" />
+      <div class="input-group"> <!-- Contenedor del primer campo de entrada -->
+        <label for="num1">Enter first number:</label> <!-- Etiqueta para el primer número -->
+        <input type="number" id="num1" /> <!-- Campo de entrada para el primer número -->
       </div>
 
-      <h3 id="operator">+</h3>
+      <h3 id="operator">+</h3> <!-- Muestra el operador seleccionado -->
 
-      <div class="input-group">
-        <label for="num2">Enter second number:</label>
-        <input type="number" id="num2" />
+      <div class="input-group"> <!-- Contenedor del segundo campo de entrada -->
+        <label for="num2">Enter second number:</label> <!-- Etiqueta para el segundo número -->
+        <input type="number" id="num2" /> <!-- Campo de entrada para el segundo número -->
       </div>
 
-      <h3 id="result">Result:</h3>
+      <h3 id="result">Result:</h3> <!-- Muestra el resultado de la operación -->
 
-      <div class="button-group">
-        <button id="addButton">Addition</button>
-        <button onclick="resetFields()">Reset</button>
+      <div class="button-group"> <!-- Contenedor de los botones -->
+        <button onclick="calculate('+')">Addition</button> <!-- Botón para realizar suma -->
+        <button onclick="calculate('-')">Subtraction</button> <!-- Botón para realizar resta -->
+        <button onclick="resetFields()">Reset</button> <!-- Botón para reiniciar los campos de entrada -->
       </div>
     </div>
 
-    <script>
-      function calculate() {
-        const num1 = parseFloat(document.getElementById("num1").value) || 0;
-        const num2 = parseFloat(document.getElementById("num2").value) || 0;
-        document.getElementById("result").textContent = `Result: ${num1 + num2}`;
-      }
-      
-      function resetFields() {
-        document.getElementById("num1").value = "";
-        document.getElementById("num2").value = "";
-        document.getElementById("result").textContent = "Result:";
-      }
-
-      document.getElementById("addButton").addEventListener("click", calculate);
-    </script>
+    <script src="index.js"></script> <!-- Enlace al archivo JavaScript que maneja la lógica de la calculadora -->
   </body>
 </html>
