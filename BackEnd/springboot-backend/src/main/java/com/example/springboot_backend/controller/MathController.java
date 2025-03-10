@@ -3,6 +3,7 @@ package com.example.springboot_backend.controller;
 import com.example.springboot_backend.dto.MathResponse;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "http://127.0.0.1:5500") // Allow frontend requests
 @RestController
 @RequestMapping("/math")
 public class MathController {
