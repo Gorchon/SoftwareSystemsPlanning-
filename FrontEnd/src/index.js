@@ -33,3 +33,5 @@ function resetFields() {
     document.getElementById('result').innerHTML = 'Result:';
     document.getElementById('operator').innerHTML = '+';
 }
+
+// aksjd
