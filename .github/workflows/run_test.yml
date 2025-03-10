@@ -8,104 +8,50 @@ on:
 jobs:
   test:
     name: Test
+
     runs-on: ubuntu-22.04
 
     container:
       image: node:20
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: List Repository Files (Debugging)
-        run: |
-          echo "Current directory: $(pwd)"
-          echo "Listing all files in root:"
-          ls -al
+      - uses: actions/setup-node@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
         with:
           node-version: "20"
 
-      - name: Set up Chrome
-        uses: browser-actions/setup-chrome@v1
+      - uses: browser-actions/setup-chrome@v1
+
         with:
           chrome-version: 120
+
           install-dependencies: true
 
-      - name: Set up Java and Maven
-        uses: actions/setup-java@v3
-        with:
-          distribution: "temurin"
-          java-version: "17"
+      - run: |
 
-      - name: Locate and Start Spring Boot Backend
-        run: |
-          # Check if BackEnd or backend exists
-          if [ -d "BackEnd" ]; then
-            echo "Found BackEnd directory!"
-            cd BackEnd
-          elif [ -d "backend" ]; then
-            echo "Found backend directory!"
-            cd backend
-          else
-            echo "ERROR: Backend directory not found!"
-            exit 1
-          fi
+          cd FrontEnd/src
 
-          # Print directory contents for debugging
-          echo "Current directory after cd: $(pwd)"
-          echo "Contents:"
-          ls -al
+          python3 -m http.server 8000 &
 
-          # Build and run backend
-          mvn clean package
-          nohup java -jar target/*.jar &  # Run backend in the background
+          sleep 10 &&
 
-      - name: Wait for Backend to be ready
-        run: |
-          sudo apt-get install -y netcat
-          while ! nc -z localhost 8080; do
-            sleep 3
-          done
-          echo "Backend is ready!"
+          curl http://localhost:8000
 
-      - name: Locate and Start Frontend Server
-        run: |
-          # Check if FrontEnd or frontend exists
-          if [ -d "FrontEnd/src" ]; then
-            echo "Found FrontEnd/src directory!"
-            cd FrontEnd/src
-          elif [ -d "frontend/src" ]; then
-            echo "Found frontend/src directory!"
-            cd frontend/src
-          else
-            echo "ERROR: Frontend directory not found!"
-            exit 1
-          fi
+          cd ..
 
-          nohup python3 -m http.server 8000 &  # Run frontend in the background
-          sleep 10  # Give time for the server to start
-          curl http://localhost:8000  # Ensure it's running
+          cd tests
 
-      - name: Install Frontend Test Dependencies
-        run: |
-          if [ -d "FrontEnd/tests" ]; then cd FrontEnd/tests
-          elif [ -d "frontend/tests" ]; then cd frontend/tests
-          else echo "Tests directory not found!"; exit 1; fi
           npm install
 
-      - name: Run Frontend Tests
-        run: |
-          if [ -d "FrontEnd/tests" ]; then cd FrontEnd/tests
-          elif [ -d "frontend/tests" ]; then cd frontend/tests
-          else echo "Tests directory not found!"; exit 1; fi
           ./node_modules/.bin/mocha *.js
 
-      - name: Upload Test Artifacts
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
+
         if: always()
+
         with:
           name: screenshots
+
           path: screenshots/
