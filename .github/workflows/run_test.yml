@@ -8,50 +8,68 @@ on:
 jobs:
   test:
     name: Test
-
     runs-on: ubuntu-22.04
 
     container:
       image: node:20
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: "20"
 
-      - uses: browser-actions/setup-chrome@v1
-
+      - name: Set up Chrome
+        uses: browser-actions/setup-chrome@v1
         with:
           chrome-version: 120
-
           install-dependencies: true
 
-      - run: |
+      - name: Set up Java and Maven
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: "17"
 
-          cd FrontEnd/src
-
-          python3 -m http.server 8000 &
-
-          sleep 10 &&
-
-          curl http://localhost:8000
-
+      - name: Start Spring Boot Backend
+        run: |
+          cd BackEnd
+          mvn clean package
+          nohup java -jar target/*.jar &  # Run backend in the background
           cd ..
 
-          cd tests
+      - name: Wait for Backend to be ready
+        run: |
+          sudo apt-get install -y netcat
+          while ! nc -z localhost 8080; do
+            sleep 3
+          done
+          echo "Backend is ready!"
 
+      - name: Start Frontend Server
+        run: |
+          cd FrontEnd/src
+          nohup python3 -m http.server 8000 &  # Run frontend in the background
+          sleep 10  # Give time for the server to start
+          curl http://localhost:8000  # Ensure it's running
+          cd ..
+
+      - name: Install Frontend Test Dependencies
+        run: |
+          cd tests
           npm install
 
+      - name: Run Frontend Tests
+        run: |
+          cd tests
           ./node_modules/.bin/mocha *.js
 
-      - uses: actions/upload-artifact@v4
-
+      - name: Upload Test Artifacts
+        uses: actions/upload-artifact@v4
         if: always()
-
         with:
           name: screenshots
-
           path: screenshots/
