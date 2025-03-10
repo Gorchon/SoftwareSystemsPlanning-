@@ -17,6 +17,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: List Repository Files (Debugging)
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Listing all files in root:"
+          ls -al
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -34,12 +40,28 @@ jobs:
           distribution: "temurin"
           java-version: "17"
 
-      - name: Start Spring Boot Backend
+      - name: Locate and Start Spring Boot Backend
         run: |
-          cd BackEnd
+          # Check if BackEnd or backend exists
+          if [ -d "BackEnd" ]; then
+            echo "Found BackEnd directory!"
+            cd BackEnd
+          elif [ -d "backend" ]; then
+            echo "Found backend directory!"
+            cd backend
+          else
+            echo "ERROR: Backend directory not found!"
+            exit 1
+          fi
+
+          # Print directory contents for debugging
+          echo "Current directory after cd: $(pwd)"
+          echo "Contents:"
+          ls -al
+
+          # Build and run backend
           mvn clean package
           nohup java -jar target/*.jar &  # Run backend in the background
-          cd ..
 
       - name: Wait for Backend to be ready
         run: |
@@ -49,22 +71,36 @@ jobs:
           done
           echo "Backend is ready!"
 
-      - name: Start Frontend Server
+      - name: Locate and Start Frontend Server
         run: |
-          cd FrontEnd/src
+          # Check if FrontEnd or frontend exists
+          if [ -d "FrontEnd/src" ]; then
+            echo "Found FrontEnd/src directory!"
+            cd FrontEnd/src
+          elif [ -d "frontend/src" ]; then
+            echo "Found frontend/src directory!"
+            cd frontend/src
+          else
+            echo "ERROR: Frontend directory not found!"
+            exit 1
+          fi
+
           nohup python3 -m http.server 8000 &  # Run frontend in the background
           sleep 10  # Give time for the server to start
           curl http://localhost:8000  # Ensure it's running
-          cd ..
 
       - name: Install Frontend Test Dependencies
         run: |
-          cd tests
+          if [ -d "FrontEnd/tests" ]; then cd FrontEnd/tests
+          elif [ -d "frontend/tests" ]; then cd frontend/tests
+          else echo "Tests directory not found!"; exit 1; fi
           npm install
 
       - name: Run Frontend Tests
         run: |
-          cd tests
+          if [ -d "FrontEnd/tests" ]; then cd FrontEnd/tests
+          elif [ -d "frontend/tests" ]; then cd frontend/tests
+          else echo "Tests directory not found!"; exit 1; fi
           ./node_modules/.bin/mocha *.js
 
       - name: Upload Test Artifacts
