@@ -7,16 +7,24 @@ function calculate(operation) {
         return;
     }
 
-    let result;
+    let endpoint;
     if (operation === "+") {
-        result = parseFloat(num1) + parseFloat(num2);
+        endpoint = "http://localhost:8080/math/add";
         document.getElementById('operator').innerHTML = '+';
     } else if (operation === "-") {
-        result = parseFloat(num1) - parseFloat(num2);
+        endpoint = "http://localhost:8080/math/subtract";
         document.getElementById('operator').innerHTML = '-';
     }
 
-    document.getElementById('result').innerHTML = `Result: ${result}`;
+    fetch(`${endpoint}?num1=${num1}&num2=${num2}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('result').innerHTML = `Result: ${data.result}`;
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Failed to fetch the result.");
+        });
 }
 
 function resetFields() {
