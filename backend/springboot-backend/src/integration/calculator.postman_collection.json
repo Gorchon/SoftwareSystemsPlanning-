@@ -1,79 +1,101 @@
 {
-	"info": {
-		"_postman_id": "3ac6942b-c9fd-4aec-acac-bd2ba205b0e0",
-		"name": "WorkingOnTests",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "31911918"
-	},
-	"item": [
-		{
-			"name": "SumTests",
-			"request": {
-				"method": "GET",
-				"header": []
-			},
-			"response": []
-		},
-		{
-			"name": "SubsRequest",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"// Test for status code 200",
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"// Test to ensure that the result is correct",
-							"pm.test(\"The sum of num1 and num2 gives the correct result\", function () {",
-							"  var jsonData = pm.response.json();",
-							"  var sum = jsonData.result;",
-							"  var num1 = pm.request.url.query.get('num1');",
-							"  var num2 = pm.request.url.query.get('num2');",
-							"  pm.expect(sum).to.equal(Number(num1) - Number(num2));",
-							"});",
-							"",
-							"",
-							"// Test for response time less than 300 milliseconds",
-							"pm.test(\"Response time is less than 300ms\", function () {",
-							"    pm.expect(pm.response.responseTime).to.be.below(300);",
-							"});",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/math/subtract?num1=10&num2=3",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"math",
-						"subtract"
-					],
-					"query": [
-						{
-							"key": "num1",
-							"value": "10"
-						},
-						{
-							"key": "num2",
-							"value": "3"
-						}
-					]
-				}
-			},
-			"response": []
-		}
-	]
+    "info": {
+        "_postman_id": "3ac6942b-c9fd-4aec-acac-bd2ba205b0e0",
+        "name": "WorkingOnTests",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "_exporter_id": "31911918"
+    },
+    "item": [
+        {
+            "name": "SumTests",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "http://localhost:8080/math/add?num1=5&num2=3",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "math",
+                        "add"
+                    ],
+                    "query": [
+                        {
+                            "key": "num1",
+                            "value": "5"
+                        },
+                        {
+                            "key": "num2",
+                            "value": "3"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "SubsRequest",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "// Test for status code 200",
+                            "pm.test(\"Status code is 200\", function () {",
+                            "    pm.response.to.have.status(200);",
+                            "});",
+                            "",
+                            "// Test to ensure that the result is correct",
+                            "pm.test(\"The sum of num1 and num2 gives the correct result\", function () {",
+                            "  var jsonData = pm.response.json();",
+                            "  var sum = jsonData.result;",
+                            "  var num1 = pm.request.url.query.get('num1');",
+                            "  var num2 = pm.request.url.query.get('num2');",
+                            "  pm.expect(sum).to.equal(Number(num1) - Number(num2));",
+                            "});",
+                            "",
+                            "",
+                            "// Test for response time less than 300 milliseconds",
+                            "pm.test(\"Response time is less than 300ms\", function () {",
+                            "    pm.expect(pm.response.responseTime).to.be.below(300);",
+                            "});",
+                            ""
+                        ],
+                        "type": "text/javascript",
+                        "packages": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "http://localhost:8080/math/subtract?num1=10&num2=3",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "math",
+                        "subtract"
+                    ],
+                    "query": [
+                        {
+                            "key": "num1",
+                            "value": "10"
+                        },
+                        {
+                            "key": "num2",
+                            "value": "3"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        }
+    ]
 }
