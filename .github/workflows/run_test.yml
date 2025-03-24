@@ -1,57 +1,78 @@
-name: Run tests
+name: Full Tests
 
 on:
   pull_request:
     branches: [main]
+  push:
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
-  test:
-    name: Test
+  backend-test:
+    name: Backend Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
+          cache: maven
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build and Start Spring Boot Server
+        run: |
+          cd backend/springboot-backend
+          mvn clean spring-boot:run &
+          # Wait for the server to start (using curl to check if the port is open)
+          while ! curl --output /dev/null --silent --head http://localhost:8080; do
+            echo "Waiting for server to start..."
+            sleep 5
+          done
+          echo "Server started successfully!"
+
+      - name: Run Integration Tests with Newman
+        run: |
+          npm install -g newman
+          newman -v
+          newman run backend/springboot-backend/src/integration/calculator.postman_collection.json
+
+  frontend-test:
+    name: Frontend Test
     runs-on: ubuntu-22.04
-
     container:
       image: node:20
-
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
-
         with:
           node-version: "20"
 
       - uses: browser-actions/setup-chrome@v1
-
         with:
           chrome-version: 120
-
           install-dependencies: true
 
-      - run: |
-
+      - name: Run Frontend Tests
+        run: |
           cd FrontEnd/src
-
           python3 -m http.server 8000 &
-
           sleep 10 &&
-
           curl http://localhost:8000
-
           cd ..
-
           cd tests
-
           npm install
-
           ./node_modules/.bin/mocha *.js
 
       - uses: actions/upload-artifact@v4
-
         if: always()
-
         with:
           name: screenshots
-
           path: screenshots/
