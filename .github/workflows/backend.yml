@@ -28,7 +28,7 @@ jobs:
 
       - name: Build with Maven and Run Integration Tests
         run: |
-          cd BackEnd/springboot-backend
+          cd backend/springboot-backend
           mvn clean spring-boot:run &
           echo "waiting 5 seconds for the server to start"
           sleep 10
