@@ -1,14 +1,49 @@
-name: Run tests
+name: Run Tests
 
 on:
+  # This workflow is triggered on push to main, pull requests into main, and manual dispatch
+  push:
+    branches: [main]
   pull_request:
     branches: [main]
   workflow_dispatch:
 
 jobs:
-  test:
-    name: Test
+  # --- Job 1: Build and Integration Tests (Java + Newman) ---
+  build-and-integration-test:
+    runs-on: ubuntu-latest
 
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
+          cache: maven
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build with Maven and Run Integration Tests
+        run: |
+          cd backend/springboot-backend
+          mvn clean spring-boot:run &
+          echo "waiting 5 seconds for the server to start"
+          sleep 10
+          echo "Server ready for testing"
+          npm install -g newman
+          newman -v
+          newman run src/integration/calculator.postman_collection.json
+
+  # --- Job 2: Frontend Tests (Node + Chrome) ---
+  frontend-tests:
+    # If you want the frontend tests to wait for the backend integration tests,
+    # uncomment the line below:
+    # needs: build-and-integration-test
     runs-on: ubuntu-22.04
 
     container:
@@ -18,40 +53,30 @@ jobs:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
-
         with:
           node-version: "20"
 
       - uses: browser-actions/setup-chrome@v1
-
         with:
           chrome-version: 120
-
           install-dependencies: true
 
-      - run: |
-
+      - name: Run Frontend Tests
+        run: |
           cd FrontEnd/src
-
           python3 -m http.server 8000 &
-
-          sleep 10 &&
-
+          # Give the local server time to start
+          sleep 10
+          # Confirm server is up
           curl http://localhost:8000
-
+          # Go to tests directory
           cd ..
-
           cd tests
-
           npm install
-
           ./node_modules/.bin/mocha *.js
 
       - uses: actions/upload-artifact@v4
-
         if: always()
-
         with:
           name: screenshots
-
           path: screenshots/
